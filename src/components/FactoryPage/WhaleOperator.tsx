@@ -1,6 +1,6 @@
-import whaleIdle from "./assets/whale-idle.png";
-import whaleSweat from "./assets/whale-sweat.png";
-import whaleTyping from "./assets/whale-typing.png";
+import whaleIdle from "./assets/whale-idle.webp";
+import whaleSweat from "./assets/whale-sweat.webp";
+import whaleTyping from "./assets/whale-typing.webp";
 
 const SOURCES = { idle: whaleIdle, typing: whaleTyping, sweat: whaleSweat } as const;
 export type WhaleState = keyof typeof SOURCES;

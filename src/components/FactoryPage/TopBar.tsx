@@ -73,7 +73,8 @@ export function TopBar({
   else if (fleet.decodeTps <= 0) status = t("statusIdle");
   else status = t("statusRunning");
 
-  const speed = fleet.decodeTps.toFixed(1);
+  const rateKnown = fleet.units.some((u) => u.decodeTps !== null);
+  const speed = rateKnown ? fleet.decodeTps.toFixed(1) : "—";
   const streams = fleet.activeStreams === null ? "—" : String(fleet.activeStreams);
   const queued = fleet.queued === null ? "—" : String(fleet.queued);
   const peak = fleet.peakTempC === null ? "—" : formatTemperature(fleet.peakTempC, tempUnit);

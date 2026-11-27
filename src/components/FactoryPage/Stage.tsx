@@ -1,8 +1,8 @@
-import { useEffect, useState, type CSSProperties, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useState, type CSSProperties, type RefObject } from "react";
 import bgFactory from "./assets/bg-factory.webp";
-import officeGlass from "./assets/office-glass.png";
+import officeGlass from "./assets/office-glass.webp";
 import { BossOffice } from "./BossOffice";
-import hopper from "./assets/hopper.png";
+import hopper from "./assets/hopper.webp";
 import { Conveyor } from "./Conveyor";
 import { factoryColumns, tokenRatePerSecond, type FactoryFleet } from "./factoryModel";
 import { SparkUnit } from "./SparkUnit";
@@ -33,7 +33,8 @@ export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, 
   const [scale, setScale] = useState(1);
   const { subscribe } = useFactoryStage(rootRef, { intensity: fleet.intensity, paused, preview });
 
-  useEffect(() => {
+  // Measure before the first paint so the art never flashes at full 1920 px scale.
+  useLayoutEffect(() => {
     const el = rootRef.current;
     if (!el) return;
     const read = () => {
@@ -66,10 +67,17 @@ export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, 
         <img className="factory-bg" src={bgFactory} alt="" aria-hidden="true" />
         <img className="factory-office" src={officeGlass} alt="" aria-hidden="true" />
         <div className="factory-office-stand" aria-hidden="true" />
-        <BossOffice intensity={fleet.intensity} busy={fleet.intensity > 0.15} asleep={fleet.intensity < 0.02} />
+        {/* Idle shows tea/newspaper; the nap is reserved for a genuinely flat line. */}
+        <BossOffice
+          intensity={fleet.intensity}
+          busy={fleet.intensity > 0.15}
+          asleep={false}
+        />
         <Conveyor subscribe={subscribe} rate={tokenRatePerSecond(fleet.decodeTps)} />
         <img className="factory-hopper" src={hopper} alt="" aria-hidden="true" />
-        <div className={`factory-floor factory-floor--cols-${columns}`}>
+        <div
+          className={`factory-floor factory-floor--cols-${columns}${fleet.units.length > 6 ? " factory-floor--scroll" : ""}`}
+        >
           {ordered.map((unit, index) => (
             <SparkUnit
               key={unit.id}

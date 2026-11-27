@@ -1,6 +1,6 @@
-import bossAsleep from "./assets/boss-asleep.png";
-import bossBusy from "./assets/boss-busy.png";
-import bossTea from "./assets/boss-tea.png";
+import bossAsleep from "./assets/boss-asleep.webp";
+import bossBusy from "./assets/boss-busy.webp";
+import bossTea from "./assets/boss-tea.webp";
 
 const SOURCES = { tea: bossTea, busy: bossBusy, asleep: bossAsleep } as const;
 type BossState = keyof typeof SOURCES;

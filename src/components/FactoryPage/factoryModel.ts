@@ -4,6 +4,13 @@ import { makeHeadResolver, usableHead, type HeadResolver } from "../../shared/sp
 
 export type FactoryStation = "head" | "worker" | "standalone";
 
+/** Why a unit has no model to name; the text is chosen from static i18n keys. */
+export type FactoryUnitNote =
+  | "headOffline"
+  | "headApiNotReady"
+  | "noHeadPort"
+  | "noLocalInference";
+
 export interface FactoryUnit {
   id: string;
   name: string;
@@ -13,6 +20,8 @@ export interface FactoryUnit {
   /** Workers show the head's model name; null when there is no usable head. */
   modelText: string | null;
   modelMuted: boolean;
+  /** Set instead of `modelText` when there is a reason to name rather than a model. */
+  note: FactoryUnitNote | null;
   /** Workers never report their own rate: their LLM probe is off. */
   decodeTps: number | null;
   activeStreams: number | null;
@@ -110,11 +119,24 @@ function unitOf(spark: SparkSnapshot, headOf: HeadResolver<SparkSnapshot>): Fact
   const endpoints = measuredEndpoints(spark);
 
   let modelText: string | null;
+  let note: FactoryUnitNote | null = null;
   if (isWorker) {
-    const head = usableHead(headOf(spark));
-    modelText = availableModelId(head) ?? spark.workerLabel ?? null;
+    const head = headOf(spark);
+    const liveHead = usableHead(head);
+    modelText = availableModelId(liveHead) ?? spark.workerLabel ?? null;
+    if (modelText === null && head) {
+      const headEndpoints = Array.isArray(liveHead?.metrics.llm) ? liveHead.metrics.llm : [];
+      note =
+        head.online === false
+          ? "headOffline"
+          : headEndpoints.length > 0
+            ? "headApiNotReady"
+            : "noHeadPort";
+    }
   } else {
     modelText = availableModelId(spark);
+    const endpoints = Array.isArray(spark.metrics.llm) ? spark.metrics.llm : [];
+    if (modelText === null && spark.online && endpoints.length === 0) note = "noLocalInference";
   }
 
   const gpu = spark.metrics.gpu;
@@ -128,6 +150,7 @@ function unitOf(spark: SparkSnapshot, headOf: HeadResolver<SparkSnapshot>): Fact
     station,
     modelText,
     modelMuted: modelText === null,
+    note,
     decodeTps: isWorker || endpoints.length === 0
       ? null
       : sumOf(endpoints.map((e) => e.generationTps)),
@@ -137,7 +160,7 @@ function unitOf(spark: SparkSnapshot, headOf: HeadResolver<SparkSnapshot>): Fact
     gpuPct: measured(gpu?.usage, availability?.usage !== false),
     gpuTempC: measured(gpu?.temperature, availability?.temperature !== false),
     gpuW: measured(gpu?.power?.draw, availability?.powerDraw !== false),
-    hotspot: gpu?.throttle?.thermal === true,
+    hotspot: spark.online && gpu?.throttle?.thermal === true,
   };
 }
 
@@ -176,9 +199,9 @@ export function factoryFleet(sparks: readonly SparkSnapshot[]): FactoryFleet {
     queued: sumOf(list.map(queuedOf)),
     peakTempC: maxOf(units.map((u) => u.gpuTempC)),
     powerW: sumOf(units.map((u) => u.gpuW)),
-    thermalThrottled: list.filter((s) => s.metrics.gpu?.throttle?.thermal === true).length,
-    powerCapped: list.filter((s) => s.metrics.gpu?.throttle?.powerCap === true).length,
-    hardwareSlowdowns: list.filter((s) => s.metrics.gpu?.throttle?.hwSlowdown === true).length,
+    thermalThrottled: list.filter((s) => s.online && s.metrics.gpu?.throttle?.thermal === true).length,
+    powerCapped: list.filter((s) => s.online && s.metrics.gpu?.throttle?.powerCap === true).length,
+    hardwareSlowdowns: list.filter((s) => s.online && s.metrics.gpu?.throttle?.hwSlowdown === true).length,
     fanPctAvg: fanAverage(list),
     intensity: intensityFor(decodeTps),
   };

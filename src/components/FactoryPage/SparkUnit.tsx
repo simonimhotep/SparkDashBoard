@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { formatTemperature } from "../../shared/fleetExceptions";
-import armBase from "./assets/arm-base.png";
-import armFore from "./assets/arm-fore.png";
-import armUpper from "./assets/arm-upper.png";
-import canopy from "./assets/canopy.png";
-import joystick from "./assets/joystick.png";
+import armBase from "./assets/arm-base.webp";
+import armFore from "./assets/arm-fore.webp";
+import armUpper from "./assets/arm-upper.webp";
+import canopy from "./assets/canopy.webp";
+import joystick from "./assets/joystick.webp";
 import unitBody from "./assets/unit-body.webp";
 import type { FactoryUnit } from "./factoryModel";
 import { WhaleOperator, type WhaleState } from "./WhaleOperator";
@@ -30,6 +30,17 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
         : t("roleStandalone");
   const pct = unit.gpuPct === null ? "—" : `${Math.round(unit.gpuPct)}%`;
   const temp = unit.gpuTempC === null ? "—" : formatTemperature(unit.gpuTempC, tempUnit);
+  const modelLabel =
+    unit.modelText ??
+    (unit.note === "headOffline"
+      ? t("headOffline")
+      : unit.note === "headApiNotReady"
+        ? t("headApiNotReady")
+        : unit.note === "noHeadPort"
+          ? t("noHeadPort")
+          : unit.note === "noLocalInference"
+            ? t("noLocalInference")
+            : t("noLlm"));
   const hasOperator = unit.online && (unit.station === "worker" || unit.modelText !== null);
   const whaleState: WhaleState = unit.hotspot
     ? "sweat"
@@ -69,7 +80,7 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
 
       <div className="factory-unit__lcd">
         <span className="factory-unit__tag">#{String(index).padStart(2, "0")}</span>
-        <span className="factory-unit__model">{unit.modelText ?? t("noLlm")}</span>
+        <span className="factory-unit__model">{modelLabel}</span>
         <span className="factory-unit__metrics">
           <span className="factory-unit__metric">{pct}</span>
           <span className="factory-unit__metric">{temp}</span>

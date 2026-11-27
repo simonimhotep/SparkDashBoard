@@ -58,6 +58,56 @@ describe("factoryFleet", () => {
     expect(f.units[1].hotspot).toBe(false);
   });
 
+  it("never treats an offline unit's stale throttle reading as a hotspot", () => {
+    const off = makeSpark("off", false);
+    (off.metrics as unknown as Record<string, unknown>).gpu = {
+      usage: 42,
+      temperature: 70,
+      power: { draw: 90 },
+      throttle: {
+        thermal: true,
+        powerCap: true,
+        hwSlowdown: true,
+        active: true,
+      },
+    };
+    const f = factoryFleet([off]);
+    expect(f.units[0].hotspot).toBe(false);
+    expect(f.thermalThrottled).toBe(0);
+    expect(f.powerCapped).toBe(0);
+    expect(f.hardwareSlowdowns).toBe(0);
+  });
+
+  it("names why a worker has no model to show", () => {
+    const head = makeSpark("h");
+    head.role = "head";
+    const worker = () => {
+      const w = makeSpark("w");
+      w.role = "worker";
+      w.workerHeadId = "h";
+      w.metrics.llm = [];
+      return w;
+    };
+    const offlineHead = makeSpark("h", false);
+    offlineHead.role = "head";
+    expect(factoryFleet([offlineHead, worker()]).units[1].note).toBe("headOffline");
+
+    head.metrics.llm = [];
+    expect(factoryFleet([head, worker()]).units[1].note).toBe("noHeadPort");
+
+    const notReady = makeSpark("h");
+    notReady.role = "head";
+    notReady.metrics.llm[0].available = false;
+    expect(factoryFleet([notReady, worker()]).units[1].note).toBe("headApiNotReady");
+  });
+
+  it("marks an online unit with no LLM endpoint as having no local inference", () => {
+    const host = makeSpark("host");
+    host.metrics.llm = [];
+    expect(factoryFleet([host]).units[0].note).toBe("noLocalInference");
+    expect(factoryFleet([makeSpark("off", false)]).units[0].note).toBeNull();
+  });
+
   it("sums the queue and the streams from the endpoints that report them", () => {
     const head = makeSpark("h");
     head.role = "head";

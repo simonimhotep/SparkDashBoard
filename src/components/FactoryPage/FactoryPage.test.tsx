@@ -91,4 +91,19 @@ describe("FactoryPage", () => {
     });
     expect(container.querySelector(".factory")?.classList.contains("is-idle")).toBe(true);
   });
+
+  it("pause from the top bar reaches the stage and the button flips", async () => {
+    sparks = [makeSpark("a")];
+    const { container } = render(<FactoryPage />);
+    await flush();
+    const pause = Array.from(container.querySelectorAll("button")).find((b) =>
+      b.textContent?.includes("Pause"),
+    );
+    expect(pause?.getAttribute("aria-pressed")).toBe("false");
+    act(() => pause!.click());
+    const resume = Array.from(container.querySelectorAll("button")).find((b) =>
+      b.textContent?.includes("Resume"),
+    );
+    expect(resume?.getAttribute("aria-pressed")).toBe("true");
+  });
 });

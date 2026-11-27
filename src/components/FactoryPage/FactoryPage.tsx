@@ -145,15 +145,24 @@ export function FactoryPage() {
         preview={preview}
         onTogglePause={() => setPaused((v) => !v)}
         onTogglePreview={() => setPreview((v) => !v)}
-        onOpenThermals={() => setThermalsOpen(true)}
-        onOpenTrend={() => setTrendIds(fleet.units.map((u) => u.id))}
+        onOpenThermals={() => {
+          setTrendIds(null);
+          setThermalsOpen(true);
+        }}
+        onOpenTrend={() => {
+          setThermalsOpen(false);
+          setTrendIds(fleet.units.map((u) => u.id));
+        }}
         onToggleFullscreen={toggleFullscreen}
       />
       <div className="factory-body">
         <Stage
           fleet={fleet}
           tempUnit={tempUnit}
-          onSelectUnit={(id) => setTrendIds([id])}
+          onSelectUnit={(id) => {
+            setThermalsOpen(false);
+            setTrendIds([id]);
+          }}
           rootRef={stageRef}
           paused={paused}
           preview={preview}

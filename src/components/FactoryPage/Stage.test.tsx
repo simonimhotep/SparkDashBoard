@@ -42,4 +42,14 @@ describe("Stage", () => {
     expect(container.querySelector(".factory-stage")?.classList.contains("is-stale")).toBe(true);
     expect(container.textContent).toContain("42%");
   });
+
+  it("scrolls the floor instead of overflowing the stage past six units", () => {
+    const many = factoryFleet(["a", "b", "c", "d", "e", "f", "g"].map((id) => makeSpark(id)));
+    const { container } = render(
+      <Stage fleet={many} tempUnit="celsius" onSelectUnit={() => {}} rootRef={createRef()} />,
+    );
+    expect(container.querySelector(".factory-floor")?.classList.contains("factory-floor--scroll")).toBe(
+      true,
+    );
+  });
 });

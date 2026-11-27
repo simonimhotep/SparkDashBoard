@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getUnitHistory } from "../../api/client";
 import type { MetricsHistoryRange } from "../../api/types";
+import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useOverlayClose } from "../../hooks/useOverlayClose";
 import { smoothPath, tracesFromHistory } from "../KioskPage/kioskModel";
 import { forEachLimited } from "../KioskPage/useKioskTraces";
@@ -58,6 +59,7 @@ interface TrendDrawerProps {
 export function TrendDrawer({ units, onClose }: TrendDrawerProps) {
   const { t } = useTranslation("factory");
   const overlay = useOverlayClose(onClose, units !== null);
+  const trap = useFocusTrap(units !== null);
   const [rows, setRows] = useState<TrendSeries[] | null>(null);
   const key = units === null ? "" : units.map((u) => u.id).join("|");
 
@@ -105,7 +107,7 @@ export function TrendDrawer({ units, onClose }: TrendDrawerProps) {
   const title = units.length > 1 ? t("trendFleet") : t("trendTitle");
 
   return (
-    <div className="factory-sheet" {...overlay}>
+    <div className="factory-sheet" ref={trap} {...overlay}>
       <aside className="factory-sheet__panel" role="dialog" aria-modal="true" aria-label={title}>
         <header className="factory-sheet__head">
           <h2 className="factory-sheet__title">{title}</h2>

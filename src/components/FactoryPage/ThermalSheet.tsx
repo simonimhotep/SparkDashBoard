@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useOverlayClose } from "../../hooks/useOverlayClose";
 import { formatTemperature } from "../../shared/fleetExceptions";
 import type { FactoryUnit } from "./factoryModel";
@@ -15,6 +16,7 @@ interface ThermalSheetProps {
 export function ThermalSheet({ units, tempUnit, onClose }: ThermalSheetProps) {
   const { t } = useTranslation("factory");
   const overlay = useOverlayClose(onClose, units !== null);
+  const trap = useFocusTrap(units !== null);
 
   useEffect(() => {
     if (units === null) return;
@@ -28,7 +30,7 @@ export function ThermalSheet({ units, tempUnit, onClose }: ThermalSheetProps) {
   if (units === null) return null;
 
   return (
-    <div className="factory-sheet" {...overlay}>
+    <div className="factory-sheet" ref={trap} {...overlay}>
       <aside className="factory-sheet__panel" role="dialog" aria-modal="true" aria-label={t("thermals")}>
         <header className="factory-sheet__head">
           <h2 className="factory-sheet__title">{t("thermals")}</h2>

@@ -36,6 +36,29 @@ describe("TopBar", () => {
     expect(container.textContent).toMatch(/Data from/);
     expect(container.textContent).toContain("20.0");
   });
+
+  it("shows an unknown rate as a dash, never as a measured zero", () => {
+    const unmeasured = makeSpark("a");
+    unmeasured.metrics.llm[0].measurementValid = false;
+    const { container } = render(
+      <TopBar
+        fleet={factoryFleet([unmeasured])}
+        connected
+        lastValidSnapshotAt={Date.now()}
+        refreshInterval={2_000}
+        tempUnit="celsius"
+        paused={false}
+        preview={false}
+        onTogglePause={noop}
+        onTogglePreview={noop}
+        onOpenThermals={noop}
+        onOpenTrend={noop}
+        onToggleFullscreen={noop}
+      />,
+    );
+    expect(container.textContent).not.toContain("0.0");
+    expect(container.textContent).toContain("—");
+  });
 });
 
 describe("ThermalCard", () => {

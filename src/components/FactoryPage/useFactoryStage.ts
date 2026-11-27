@@ -111,7 +111,9 @@ export function useFactoryStage(rootRef: React.RefObject<HTMLElement | null>, op
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [rootRef, opts.intensity, opts.paused, opts.preview]);
+    // The loop reads the latest options through `rate`; only rootRef may restart it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rootRef]);
 
   return { subscribe };
 }

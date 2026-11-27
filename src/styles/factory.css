@@ -924,3 +924,12 @@
 @media (prefers-reduced-motion: reduce) {
   .factory-stage.is-stale .factory-stage__inner { transition: none; }
 }
+
+/* More than six units keep a scrollable grid instead of growing over the office. */
+.factory-floor--scroll {
+  align-content: start;
+  overflow-y: auto;
+  padding-right: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 162, 28, 0.4) transparent;
+}
