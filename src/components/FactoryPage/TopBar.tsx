@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatTemperature } from "../../shared/fleetExceptions";
-import type { FactoryFleet } from "./factoryModel";
+import { isSnapshotStale, type FactoryFleet } from "./factoryModel";
 import { TokenTotals } from "./TokenTotals";
 
 interface TopBarProps {
@@ -65,9 +65,7 @@ export function TopBar({
   const now = useClock();
   const fullscreen = useFullscreenActive();
 
-  const age = lastValidSnapshotAt === null ? null : now - lastValidSnapshotAt;
-  const staleLimit = refreshInterval !== null && refreshInterval > 0 ? refreshInterval * 3 : null;
-  const stale = !connected || (age !== null && staleLimit !== null && age > staleLimit);
+  const stale = isSnapshotStale(connected, lastValidSnapshotAt, refreshInterval, now);
 
   let status: string;
   if (lastValidSnapshotAt === null) status = t("statusConnecting");

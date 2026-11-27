@@ -33,4 +33,13 @@ describe("Stage", () => {
     expect(r2.container.textContent).toContain("Offline");
     expect(r2.container.textContent).not.toContain("0 tok/s");
   });
+
+  it("desaturates the scene when the snapshot goes stale but keeps its numbers", () => {
+    const f = factoryFleet([makeSpark("a")]);
+    const { container } = render(
+      <Stage fleet={f} tempUnit="celsius" onSelectUnit={() => {}} rootRef={createRef()} stale />,
+    );
+    expect(container.querySelector(".factory-stage")?.classList.contains("is-stale")).toBe(true);
+    expect(container.textContent).toContain("42%");
+  });
 });

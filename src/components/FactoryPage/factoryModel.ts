@@ -64,6 +64,22 @@ export function factoryColumns(count: number): number {
   return count <= 1 ? 1 : Math.min(3, Math.ceil(Math.sqrt(count)));
 }
 
+/**
+ * The last snapshot no longer describes the fleet: the socket dropped, or the last good
+ * one is older than three polls. Nothing received yet is "connecting", not stale.
+ */
+export function isSnapshotStale(
+  connected: boolean,
+  lastValidSnapshotAt: number | null,
+  refreshInterval: number | null,
+  now: number,
+): boolean {
+  if (lastValidSnapshotAt === null) return false;
+  if (!connected) return true;
+  if (refreshInterval === null || refreshInterval <= 0) return false;
+  return now - lastValidSnapshotAt > refreshInterval * 3;
+}
+
 /** Endpoints whose rates were actually measured this poll. */
 function measuredEndpoints(spark: SparkSnapshot): LlmMetrics[] {
   return (spark.metrics.llm ?? []).filter((e) => e.available && e.measurementValid !== false);

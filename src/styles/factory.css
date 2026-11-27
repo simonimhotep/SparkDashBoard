@@ -908,3 +908,19 @@
 
 .factory-trend__gpu { stroke: #e8a21c; }
 .factory-trend__gen { stroke: #6fb3ff; stroke-dasharray: 4 3; }
+
+/* ─── Wall behaviour ─────────────────────────────────────── */
+
+.factory.is-idle {
+  cursor: none;
+}
+
+/* A stale snapshot keeps the numbers; only the art loses its colour. */
+.factory-stage.is-stale .factory-stage__inner {
+  filter: saturate(0.45) brightness(0.82);
+  transition: filter 400ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .factory-stage.is-stale .factory-stage__inner { transition: none; }
+}

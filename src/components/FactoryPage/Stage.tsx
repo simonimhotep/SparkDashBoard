@@ -21,13 +21,15 @@ interface StageProps {
   paused?: boolean;
   /** Drive the scene at a demo pace while the numbers stay real. */
   preview?: boolean;
+  /** The snapshot stopped describing the fleet: desaturate the art, keep the numbers. */
+  stale?: boolean;
 }
 
 /**
  * The factory scene in 1920 × 1080 design coordinates. One scale variable shrinks
  * the whole scene inside the viewport, so the layered art always lines up.
  */
-export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, preview = false }: StageProps) {
+export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, preview = false, stale = false }: StageProps) {
   const [scale, setScale] = useState(1);
   const { subscribe } = useFactoryStage(rootRef, { intensity: fleet.intensity, paused, preview });
 
@@ -56,7 +58,7 @@ export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, 
   );
 
   return (
-    <main className="factory-stage" ref={rootRef}>
+    <main className={`factory-stage${stale ? " is-stale" : ""}`} ref={rootRef}>
       <div
         className="factory-stage__inner"
         style={{ "--factory-scale": scale } as CSSProperties}

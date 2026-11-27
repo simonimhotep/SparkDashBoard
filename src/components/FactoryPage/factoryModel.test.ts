@@ -5,6 +5,7 @@ import {
   factoryColumns,
   factoryFleet,
   intensityFor,
+  isSnapshotStale,
   smoothIntensity,
   tokenRatePerSecond,
 } from "./factoryModel";
@@ -92,5 +93,14 @@ describe("factoryFleet", () => {
     expect(factoryColumns(1)).toBe(1);
     expect(factoryColumns(3)).toBe(2);
     expect(factoryColumns(6)).toBe(3);
+  });
+
+  it("calls a snapshot stale when the socket is down or it is older than three polls", () => {
+    expect(isSnapshotStale(true, 1_000, 2_000, 6_999)).toBe(false);
+    expect(isSnapshotStale(true, 1_000, 2_000, 7_001)).toBe(true);
+    expect(isSnapshotStale(false, 1_000, 2_000, 1_500)).toBe(true);
+    // Nothing received yet is "connecting", not stale.
+    expect(isSnapshotStale(false, null, 2_000, 9_999)).toBe(false);
+    expect(isSnapshotStale(true, 1_000, null, 999_999)).toBe(false);
   });
 });
