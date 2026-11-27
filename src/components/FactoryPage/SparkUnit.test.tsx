@@ -15,23 +15,24 @@ describe("SparkUnit", () => {
   });
   afterEach(() => cleanupRenders());
 
-  it("seats the operator in a glass booth with a desk and a computer", () => {
+  it("seats the operator in a cab on the machine and stencils the host name", () => {
+    const unit = station();
     const { container } = render(
-      <SparkUnit unit={station()} index={1} tempUnit="celsius" intensity={0.5} onSelect={() => {}} />,
+      <SparkUnit unit={unit} index={1} tempUnit="celsius" intensity={0.5} onSelect={() => {}} />,
     );
-    const booth = container.querySelector(".factory-unit__booth");
-    expect(booth).not.toBeNull();
-    expect(booth!.querySelector(".factory-booth__desk")).not.toBeNull();
-    expect(booth!.querySelector(".factory-booth__monitor")).not.toBeNull();
-    // The operator sits inside the booth, behind its desk.
-    expect(booth!.querySelector(".factory-unit__whale")).not.toBeNull();
+    const cab = container.querySelector(".factory-unit__cab");
+    expect(cab).not.toBeNull();
+    expect(cab!.querySelector(".factory-unit__canopy")).not.toBeNull();
+    // The operator rides inside the cab, behind its glass.
+    expect(cab!.querySelector(".factory-unit__whale")).not.toBeNull();
+    expect(container.querySelector(".factory-unit__nameplate")!.textContent).toBe(unit.id);
   });
 
-  it("keeps the empty booth when the unit is offline", () => {
+  it("keeps the empty cab when the unit is offline", () => {
     const { container } = render(
       <SparkUnit unit={station(false)} index={1} tempUnit="celsius" intensity={0} onSelect={() => {}} />,
     );
-    expect(container.querySelector(".factory-unit__booth")).not.toBeNull();
+    expect(container.querySelector(".factory-unit__cab")).not.toBeNull();
     expect(container.querySelector(".factory-unit__whale")).toBeNull();
   });
 });

@@ -50,10 +50,10 @@ export function useFactoryStage(rootRef: React.RefObject<HTMLElement | null>, op
       const p = phase.current;
       root.style.setProperty("--factory-intensity", p.intensity.toFixed(3));
       root.style.setProperty("--factory-arm-phase", p.armPhase.toFixed(4));
-      root.style.setProperty("--factory-arm-angle", `${(-38 + Math.sin(p.armPhase * Math.PI * 2) * 13).toFixed(1)}deg`);
+      root.style.setProperty("--factory-arm-angle", `${(-25 + Math.sin(p.armPhase * Math.PI * 2) * 8).toFixed(1)}deg`);
       root.style.setProperty(
         "--factory-arm-angle-2",
-        `${(24 + Math.sin((p.armPhase + 0.3) * Math.PI * 2) * 21).toFixed(1)}deg`,
+        `${(110 + Math.sin(p.armPhase * Math.PI * 4) * 14).toFixed(1)}deg`,
       );
       root.style.setProperty("--factory-belt-offset", `${p.beltOffset.toFixed(1)}px`);
     };

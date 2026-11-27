@@ -3,6 +3,7 @@ import { formatTemperature } from "../../shared/fleetExceptions";
 import armBase from "./assets/arm-base.webp";
 import armFore from "./assets/arm-fore.webp";
 import armUpper from "./assets/arm-upper.webp";
+import canopy from "./assets/canopy.webp";
 import joystick from "./assets/joystick.webp";
 import unitBody from "./assets/unit-body.webp";
 import type { FactoryUnit } from "./factoryModel";
@@ -73,8 +74,12 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
 
       <div className="factory-unit__arm" aria-hidden="true">
         <img className="factory-unit__arm-base" src={armBase} alt="" />
-        <img className="factory-unit__arm-upper" src={armUpper} alt="" />
-        <img className="factory-unit__arm-fore" src={armFore} alt="" />
+        <div className="factory-unit__arm-boom">
+          <img className="factory-unit__arm-upper" src={armUpper} alt="" />
+          <div className="factory-unit__arm-stick">
+            <img className="factory-unit__arm-fore" src={armFore} alt="" />
+          </div>
+        </div>
       </div>
 
       <div className="factory-unit__lcd">
@@ -98,24 +103,18 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
         <span className={`factory-unit__led${unit.hotspot ? " is-hot" : ""}`} />
       </div>
 
-      <div className="factory-unit__booth" aria-hidden="true">
-        <span className="factory-booth__back" />
-        <span className="factory-booth__roof" />
-        <span className="factory-booth__post factory-booth__post--left" />
-        <span className="factory-booth__post factory-booth__post--right" />
-        <span className="factory-booth__floor" />
+      <div className="factory-unit__cab" aria-hidden="true">
         {hasOperator ? (
           <div className="factory-unit__whale">
             <WhaleOperator state={whaleState} />
           </div>
         ) : null}
-        <div className="factory-booth__console">
-          <span className="factory-booth__desk" />
-          <span className="factory-booth__keyboard" />
-          <span className="factory-booth__monitor" />
-          <span className="factory-booth__glass" />
-        </div>
+        <img className="factory-unit__canopy" src={canopy} alt="" />
       </div>
+
+      <span className="factory-unit__nameplate" aria-hidden="true">
+        {unit.id}
+      </span>
 
       <div className="factory-unit__plate">
         <span className="factory-unit__role">{roleLabel}</span>
