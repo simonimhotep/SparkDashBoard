@@ -3,20 +3,24 @@ import { formatTemperature } from "../../shared/fleetExceptions";
 import armBase from "./assets/arm-base.png";
 import armFore from "./assets/arm-fore.png";
 import armUpper from "./assets/arm-upper.png";
+import canopy from "./assets/canopy.png";
 import joystick from "./assets/joystick.png";
 import unitBody from "./assets/unit-body.webp";
 import type { FactoryUnit } from "./factoryModel";
+import { WhaleOperator, type WhaleState } from "./WhaleOperator";
 
 interface SparkUnitProps {
   unit: FactoryUnit;
   /** 1-based station number shown on the LCD. */
   index: number;
   tempUnit: "celsius" | "fahrenheit";
+  /** Cluster intensity: the whole line moves even where no local endpoint runs. */
+  intensity: number;
   onSelect: (id: string) => void;
 }
 
 /** One workstation: the DGX body, its LCD readout, the joystick and the role plate. */
-export function SparkUnit({ unit, index, tempUnit, onSelect }: SparkUnitProps) {
+export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkUnitProps) {
   const { t } = useTranslation("factory");
   const roleLabel =
     unit.station === "worker"
@@ -24,6 +28,12 @@ export function SparkUnit({ unit, index, tempUnit, onSelect }: SparkUnitProps) {
       : t(unit.station === "head" ? "roleHead" : "roleStandalone");
   const pct = unit.gpuPct === null ? "—" : `${Math.round(unit.gpuPct)}%`;
   const temp = unit.gpuTempC === null ? "—" : formatTemperature(unit.gpuTempC, tempUnit);
+  const hasOperator = unit.online && (unit.station === "worker" || unit.modelText !== null);
+  const whaleState: WhaleState = unit.hotspot
+    ? "sweat"
+    : intensity > 0.05 && (unit.decodeTps === null || unit.decodeTps > 0)
+      ? "typing"
+      : "idle";
   const classes = [
     "factory-unit",
     unit.station === "head" ? "is-head" : "",
@@ -75,6 +85,13 @@ export function SparkUnit({ unit, index, tempUnit, onSelect }: SparkUnitProps) {
         <span className={`factory-unit__led${unit.activeStreams ? " is-on" : ""}`} />
         <span className={`factory-unit__led${unit.hotspot ? " is-hot" : ""}`} />
       </div>
+
+      {hasOperator ? (
+        <div className="factory-unit__whale">
+          <WhaleOperator state={whaleState} />
+        </div>
+      ) : null}
+      <img className="factory-unit__canopy" src={canopy} alt="" aria-hidden="true" />
 
       <div className="factory-unit__plate">
         <span className="factory-unit__role">{roleLabel}</span>

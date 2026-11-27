@@ -1,5 +1,7 @@
 import { useEffect, useState, type CSSProperties, type RefObject } from "react";
 import bgFactory from "./assets/bg-factory.webp";
+import officeGlass from "./assets/office-glass.png";
+import { BossOffice } from "./BossOffice";
 import hopper from "./assets/hopper.png";
 import { Conveyor } from "./Conveyor";
 import { factoryColumns, tokenRatePerSecond, type FactoryFleet } from "./factoryModel";
@@ -60,6 +62,9 @@ export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, 
         style={{ "--factory-scale": scale } as CSSProperties}
       >
         <img className="factory-bg" src={bgFactory} alt="" aria-hidden="true" />
+        <img className="factory-office" src={officeGlass} alt="" aria-hidden="true" />
+        <div className="factory-office-stand" aria-hidden="true" />
+        <BossOffice intensity={fleet.intensity} busy={fleet.intensity > 0.15} asleep={fleet.intensity < 0.02} />
         <Conveyor subscribe={subscribe} rate={tokenRatePerSecond(fleet.decodeTps)} />
         <img className="factory-hopper" src={hopper} alt="" aria-hidden="true" />
         <div className={`factory-floor factory-floor--cols-${columns}`}>
@@ -69,6 +74,7 @@ export function Stage({ fleet, tempUnit, onSelectUnit, rootRef, paused = false, 
               unit={unit}
               index={index + 1}
               tempUnit={tempUnit}
+              intensity={fleet.intensity}
               onSelect={onSelectUnit}
             />
           ))}
