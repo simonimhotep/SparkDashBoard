@@ -25,7 +25,9 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
   const roleLabel =
     unit.station === "worker"
       ? t("workerOf", { name: unit.modelText ?? "—" })
-      : t(unit.station === "head" ? "roleHead" : "roleStandalone");
+      : unit.station === "head"
+        ? t("roleHead")
+        : t("roleStandalone");
   const pct = unit.gpuPct === null ? "—" : `${Math.round(unit.gpuPct)}%`;
   const temp = unit.gpuTempC === null ? "—" : formatTemperature(unit.gpuTempC, tempUnit);
   const hasOperator = unit.online && (unit.station === "worker" || unit.modelText !== null);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchSettings } from "../../api/client";
 import type { Settings } from "../../api/types";
@@ -6,6 +6,9 @@ import { idToPath, OVERVIEW_ID } from "../../constants";
 import { useSnapshot } from "../../hooks/useSnapshot";
 import { factoryFleet } from "./factoryModel";
 import { Stage } from "./Stage";
+import { ThermalCard } from "./ThermalCard";
+import { ThermalSheet } from "./ThermalSheet";
+import { TopBar } from "./TopBar";
 import "../../styles/factory.css";
 
 /**
@@ -14,8 +17,11 @@ import "../../styles/factory.css";
  */
 export function FactoryPage() {
   const { t } = useTranslation("factory");
-  const { sparks } = useSnapshot();
+  const { sparks, connected, lastValidSnapshotAt, refreshInterval } = useSnapshot();
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [thermalsOpen, setThermalsOpen] = useState(false);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const fleet = useMemo(() => factoryFleet(sparks), [sparks]);
   const tempUnit = settings?.temperatureUnit === "fahrenheit" ? "fahrenheit" : "celsius";
@@ -32,6 +38,15 @@ export function FactoryPage() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => {});
+      return;
+    }
+    const root = document.documentElement;
+    if (root.requestFullscreen) void root.requestFullscreen().catch(() => {});
   }, []);
 
   if (sparks.length === 0) {
@@ -55,10 +70,36 @@ export function FactoryPage() {
 
   return (
     <div className="factory">
-      <header className="factory-topbar">
-        <h1 className="factory-topbar__title">{t("title")}</h1>
-      </header>
-      <Stage fleet={fleet} tempUnit={tempUnit} onSelectUnit={() => {}} rootRef={stageRef} />
+      <TopBar
+        fleet={fleet}
+        connected={connected}
+        lastValidSnapshotAt={lastValidSnapshotAt}
+        refreshInterval={refreshInterval}
+        tempUnit={tempUnit}
+        paused={paused}
+        preview={preview}
+        onTogglePause={() => setPaused((v) => !v)}
+        onTogglePreview={() => setPreview((v) => !v)}
+        onOpenThermals={() => setThermalsOpen(true)}
+        onOpenTrend={() => {}}
+        onToggleFullscreen={toggleFullscreen}
+      />
+      <div className="factory-body">
+        <Stage
+          fleet={fleet}
+          tempUnit={tempUnit}
+          onSelectUnit={() => {}}
+          rootRef={stageRef}
+          paused={paused}
+          preview={preview}
+        />
+        <ThermalCard fleet={fleet} tempUnit={tempUnit} onExpand={() => setThermalsOpen(true)} />
+      </div>
+      <ThermalSheet
+        units={thermalsOpen ? fleet.units : null}
+        tempUnit={tempUnit}
+        onClose={() => setThermalsOpen(false)}
+      />
     </div>
   );
 }
