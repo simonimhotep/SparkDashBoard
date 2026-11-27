@@ -1,5 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { formatTemperature } from "../../shared/fleetExceptions";
+import armBase from "./assets/arm-base.png";
+import armFore from "./assets/arm-fore.png";
+import armUpper from "./assets/arm-upper.png";
 import joystick from "./assets/joystick.png";
 import unitBody from "./assets/unit-body.webp";
 import type { FactoryUnit } from "./factoryModel";
@@ -45,6 +48,12 @@ export function SparkUnit({ unit, index, tempUnit, onSelect }: SparkUnitProps) {
       }}
     >
       <img className="factory-unit__body" src={unitBody} alt="" aria-hidden="true" />
+
+      <div className="factory-unit__arm" aria-hidden="true">
+        <img className="factory-unit__arm-base" src={armBase} alt="" />
+        <img className="factory-unit__arm-upper" src={armUpper} alt="" />
+        <img className="factory-unit__arm-fore" src={armFore} alt="" />
+      </div>
 
       <div className="factory-unit__lcd">
         <span className="factory-unit__tag">#{String(index).padStart(2, "0")}</span>

@@ -1,5 +1,5 @@
 import { createRef } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setLocale } from "../../i18n";
 import { makeSpark } from "../../testing/fixtures";
 import { cleanupRenders, render } from "../../testing/render";
@@ -9,8 +9,13 @@ import { Stage } from "./Stage";
 describe("Stage", () => {
   beforeEach(async () => {
     await setLocale("en");
+    // jsdom has no canvas; the conveyor skips drawing when there is no 2D context.
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(() => null);
   });
-  afterEach(() => cleanupRenders());
+  afterEach(() => {
+    cleanupRenders();
+    vi.restoreAllMocks();
+  });
 
   it("renders each unit with measured values and dashes for unknown ones", () => {
     const f = factoryFleet([makeSpark("a")]);

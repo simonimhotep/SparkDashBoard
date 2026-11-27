@@ -99,8 +99,8 @@
   position: absolute;
   left: 70px;
   right: 70px;
-  top: 270px;
-  bottom: 24px;
+  top: 230px;
+  bottom: 210px;
   display: grid;
   align-content: end;
   align-items: end;
@@ -114,14 +114,14 @@
 
 .factory-unit {
   position: relative;
-  width: 700px;
+  width: 620px;
   max-width: 100%;
   cursor: pointer;
   outline: none;
 }
 
-.factory-floor--cols-1 .factory-unit { width: 980px; }
-.factory-floor--cols-3 .factory-unit { width: 470px; }
+.factory-floor--cols-1 .factory-unit { width: 900px; }
+.factory-floor--cols-3 .factory-unit { width: 430px; }
 
 .factory-unit.is-head {
   transform: scale(1.15);
@@ -154,6 +154,7 @@
 /* The LCD is a device screen: its text stays light in every theme. */
 .factory-unit__lcd {
   position: absolute;
+  z-index: 2;
   left: 6.6%;
   top: 20%;
   width: 46%;
@@ -197,6 +198,7 @@
 
 .factory-unit__joystick {
   position: absolute;
+  z-index: 2;
   right: 0;
   bottom: 4%;
   width: 16%;
@@ -235,6 +237,7 @@
 /* The plate sits on the dark stage art, so it keeps light text in every theme. */
 .factory-unit__plate {
   position: absolute;
+  z-index: 2;
   left: 50%;
   bottom: -22px;
   display: flex;
@@ -268,3 +271,103 @@
   color: #ff8f8f;
 }
 
+
+.factory-belts {
+  position: absolute;
+  left: 150px;
+  right: 150px;
+  bottom: 70px;
+  height: 56px;
+  z-index: 1;
+}
+
+.factory-belt {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: calc(50% - 140px);
+  border-radius: 4px;
+  background-color: #20252c;
+  background-image: repeating-linear-gradient(90deg, #343c47 0 42px, #1b2027 42px 72px);
+  background-size: 72px 100%;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.6);
+}
+
+.factory-belt--left {
+  left: 0;
+  background-position-x: var(--factory-belt-offset, 0px);
+}
+
+.factory-belt--right {
+  right: 0;
+  background-position-x: calc(var(--factory-belt-offset, 0px) * -1);
+}
+
+.factory-tokens {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 160px;
+  pointer-events: none;
+}
+
+.factory-hopper {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 300px;
+  z-index: 4;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.55));
+}
+
+.factory-floor {
+  z-index: 3;
+}
+
+.factory-unit__body {
+  position: relative;
+  z-index: 1;
+}
+
+.factory-unit__arm {
+  position: absolute;
+  left: -2%;
+  bottom: 64%;
+  width: 44%;
+  aspect-ratio: 1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.factory-unit__arm img {
+  position: absolute;
+  height: auto;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.45));
+}
+
+.factory-unit__arm-base {
+  left: 4%;
+  bottom: 0;
+  width: 46%;
+}
+
+.factory-unit__arm-upper {
+  left: 14%;
+  bottom: 46%;
+  width: 56%;
+  transform: rotate(var(--factory-arm-angle, -38deg));
+  transform-origin: 12% 50%;
+}
+
+.factory-unit__arm-fore {
+  left: 58%;
+  bottom: 62%;
+  width: 46%;
+  transform: rotate(var(--factory-arm-angle-2, 24deg));
+  transform-origin: 8% 50%;
+}
