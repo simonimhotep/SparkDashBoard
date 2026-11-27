@@ -1,6 +1,11 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { fetchSettings } from "../../api/client";
+import type { Settings } from "../../api/types";
 import { idToPath, OVERVIEW_ID } from "../../constants";
 import { useSnapshot } from "../../hooks/useSnapshot";
+import { factoryFleet } from "./factoryModel";
+import { Stage } from "./Stage";
 import "../../styles/factory.css";
 
 /**
@@ -10,6 +15,24 @@ import "../../styles/factory.css";
 export function FactoryPage() {
   const { t } = useTranslation("factory");
   const { sparks } = useSnapshot();
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const fleet = useMemo(() => factoryFleet(sparks), [sparks]);
+  const tempUnit = settings?.temperatureUnit === "fahrenheit" ? "fahrenheit" : "celsius";
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchSettings()
+      .then((s) => {
+        if (!cancelled) setSettings(s);
+      })
+      .catch(() => {
+        /* keep the last settings */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (sparks.length === 0) {
     return (
@@ -35,9 +58,7 @@ export function FactoryPage() {
       <header className="factory-topbar">
         <h1 className="factory-topbar__title">{t("title")}</h1>
       </header>
-      <main className="factory-stage">
-        <p className="factory-placeholder">{sparks.length}</p>
-      </main>
+      <Stage fleet={fleet} tempUnit={tempUnit} onSelectUnit={() => {}} rootRef={stageRef} />
     </div>
   );
 }
