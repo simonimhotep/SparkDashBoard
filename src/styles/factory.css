@@ -336,13 +336,14 @@
   z-index: 1;
 }
 
+/* Mounted on the floor at the machine's left, working the station. */
 .factory-unit__arm {
   position: absolute;
-  left: -2%;
-  bottom: 64%;
-  width: 44%;
+  left: -16%;
+  bottom: -6%;
+  width: 32%;
   aspect-ratio: 1;
-  z-index: 0;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -359,16 +360,16 @@
 }
 
 .factory-unit__arm-upper {
-  left: 14%;
-  bottom: 46%;
+  left: 20.3%;
+  bottom: 40.7%;
   width: 56%;
   transform: rotate(var(--factory-arm-angle, -38deg));
   transform-origin: 12% 50%;
 }
 
 .factory-unit__arm-fore {
-  left: 58%;
-  bottom: 62%;
+  left: 69.3%;
+  bottom: 42.3%;
   width: 46%;
   transform: rotate(var(--factory-arm-angle-2, 24deg));
   transform-origin: 8% 50%;
@@ -387,9 +388,10 @@
 .factory-boss {
   position: absolute;
   left: 50%;
-  top: 84px;
-  width: 300px;
-  height: 296px;
+  /* Seated on the office floor, not filling the room: the room is 760×334. */
+  top: 112px;
+  width: 210px;
+  height: 207px;
   z-index: 2;
   transform: translateX(-50%);
 }
@@ -420,12 +422,73 @@
   to { transform: translateY(-6px); }
 }
 
+/* The operator's station: a glass booth standing on the floor, with a desk and
+   a monitor inside. Back panel behind her, console in front, so she reads as
+   sitting at the desk rather than under a lid. */
+.factory-unit__booth {
+  position: absolute;
+  right: -7%;
+  bottom: -3%;
+  width: 46%;
+  aspect-ratio: 1.08;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.factory-booth__back {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 8%;
+  bottom: 12%;
+  border-radius: 10px 10px 3px 3px;
+  background: linear-gradient(168deg, rgba(222, 241, 255, 0.30), rgba(168, 205, 235, 0.16) 48%, rgba(120, 165, 205, 0.22));
+  backdrop-filter: blur(0.6px) saturate(1.05);
+  border: 2px solid rgba(232, 205, 156, 0.9);
+  box-shadow:
+    inset 0 0 26px rgba(205, 232, 255, 0.22),
+    0 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+.factory-booth__roof {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: 3%;
+  height: 5%;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #f4d9a8, #b88f53 55%, #7d5f33);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.5);
+}
+
+.factory-booth__post {
+  position: absolute;
+  top: 8%;
+  bottom: 12%;
+  width: 3%;
+  background: linear-gradient(90deg, #f0d3a0, #9d7a46);
+}
+
+.factory-booth__post--left { left: 5%; }
+.factory-booth__post--right { right: 5%; }
+
+.factory-booth__floor {
+  position: absolute;
+  left: -1%;
+  right: -1%;
+  bottom: 0;
+  height: 6.5%;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #cfab70, #8b6d3e 45%, #463620);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.65);
+}
+
 .factory-unit__whale {
   position: absolute;
-  right: 0;
-  bottom: 4%;
-  width: 30%;
-  z-index: 2;
+  right: 12%;
+  bottom: 8%;
+  width: 64%;
+  z-index: 1;
 }
 
 .factory-whale {
@@ -434,17 +497,67 @@
   aspect-ratio: 1;
 }
 
-.factory-unit__canopy {
+.factory-booth__console {
   position: absolute;
-  /* Seated over the operator, not on top of her head: the frame has to reach
-     the floor so the whale reads as sitting inside the cockpit. */
-  right: -10%;
-  bottom: 8%;
-  width: 50%;
-  z-index: 3;
-  opacity: 0.85;
-  pointer-events: none;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+  inset: 0;
+  z-index: 2;
+}
+
+.factory-booth__desk {
+  position: absolute;
+  left: 34%;
+  right: 9%;
+  bottom: 11%;
+  height: 4.2%;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4a525b, #2b3138 45%, #15191e);
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.factory-booth__keyboard {
+  position: absolute;
+  left: 36%;
+  right: 11%;
+  bottom: 15%;
+  height: 1.6%;
+  border-radius: 2px;
+  background: #12161b;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.factory-booth__monitor {
+  position: absolute;
+  left: 35%;
+  bottom: 16%;
+  width: 19%;
+  height: 11%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #123a58, #061420);
+  border: 1px solid rgba(125, 225, 255, 0.65);
+  box-shadow:
+    0 0 20px rgba(90, 200, 255, 0.55),
+    inset 0 0 16px rgba(90, 200, 255, 0.3);
+  transform: perspective(150px) rotateY(-12deg);
+}
+
+.factory-booth__glass {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 13%;
+  bottom: 14%;
+  border-radius: 8px;
+  background: linear-gradient(
+    116deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.2) 29%,
+    transparent 37%,
+    transparent 59%,
+    rgba(255, 255, 255, 0.11) 67%,
+    transparent 73%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {

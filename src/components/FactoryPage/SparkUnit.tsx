@@ -3,7 +3,6 @@ import { formatTemperature } from "../../shared/fleetExceptions";
 import armBase from "./assets/arm-base.webp";
 import armFore from "./assets/arm-fore.webp";
 import armUpper from "./assets/arm-upper.webp";
-import canopy from "./assets/canopy.webp";
 import joystick from "./assets/joystick.webp";
 import unitBody from "./assets/unit-body.webp";
 import type { FactoryUnit } from "./factoryModel";
@@ -99,12 +98,24 @@ export function SparkUnit({ unit, index, tempUnit, intensity, onSelect }: SparkU
         <span className={`factory-unit__led${unit.hotspot ? " is-hot" : ""}`} />
       </div>
 
-      {hasOperator ? (
-        <div className="factory-unit__whale">
-          <WhaleOperator state={whaleState} />
+      <div className="factory-unit__booth" aria-hidden="true">
+        <span className="factory-booth__back" />
+        <span className="factory-booth__roof" />
+        <span className="factory-booth__post factory-booth__post--left" />
+        <span className="factory-booth__post factory-booth__post--right" />
+        <span className="factory-booth__floor" />
+        {hasOperator ? (
+          <div className="factory-unit__whale">
+            <WhaleOperator state={whaleState} />
+          </div>
+        ) : null}
+        <div className="factory-booth__console">
+          <span className="factory-booth__desk" />
+          <span className="factory-booth__keyboard" />
+          <span className="factory-booth__monitor" />
+          <span className="factory-booth__glass" />
         </div>
-      ) : null}
-      <img className="factory-unit__canopy" src={canopy} alt="" aria-hidden="true" />
+      </div>
 
       <div className="factory-unit__plate">
         <span className="factory-unit__role">{roleLabel}</span>
