@@ -440,8 +440,8 @@
 .factory-unit__cab {
   position: absolute;
   right: 18%;
-  bottom: 87%;
-  width: 23%;
+  bottom: 85%;
+  width: 25%;
   z-index: 2;
   pointer-events: none;
 }
@@ -458,8 +458,8 @@
 .factory-unit__whale {
   position: absolute;
   left: 24%;
-  bottom: 8%;
-  width: 48%;
+  bottom: 6%;
+  width: 52%;
   z-index: 1;
 }
 
@@ -475,6 +475,8 @@
   z-index: 2;
   right: 3.6%;
   top: 55%;
+  max-width: 40%;
+  overflow: hidden;
   padding: 2px 10px;
   border-radius: 4px;
   background: rgba(28, 20, 8, 0.28);
@@ -483,7 +485,9 @@
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.18em;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
   text-shadow:
     0 1px 0 rgba(24, 16, 4, 0.9),
     0 -1px 0 rgba(255, 244, 214, 0.35);
