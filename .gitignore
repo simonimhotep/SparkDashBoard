@@ -65,3 +65,6 @@ __pycache__/
 !/docs/
 /docs/*
 !/docs/I18N-COVERAGE.md
+
+# Agent tool runtime state (never source)
+.omc/
