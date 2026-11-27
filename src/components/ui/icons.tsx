@@ -585,3 +585,14 @@ export function SparkleIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** Token factory: a plant with two chimneys and a doorway. */
+export function FactoryIcon({ className }: IconProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M3 20V10l6 3v-3l6 3V7l6 4v9z" />
+      <path d="M6 7V4h3v4M15 7V4h3v4" />
+      <path d="M10.5 20v-3.5h3V20" />
+    </svg>
+  );
+}

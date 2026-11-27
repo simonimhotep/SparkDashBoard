@@ -12,6 +12,8 @@ export const SHOWCASE_ID = "__showcase__";
 export const COST_ID = "__cost__";
 /** Kiosk wall display: rendered outside the dashboard shell (useAppRoute), so the app never navigates to it in place. */
 export const KIOSK_ID = "__kiosk__";
+/** Token factory: an animated full-screen stage, rendered outside the dashboard shell. */
+export const FACTORY_ID = "__factory__";
 /** Opt-in API Keys page (Settings → API Keys); only reachable while that setting is on. */
 export const API_KEYS_ID = "__apikeys__";
 /** Read-only JSON training progress; present only when the server capability is enabled. */
@@ -29,6 +31,7 @@ const FIXED_PATHS: Record<string, string> = {
   [SHOWCASE_ID]: "/showcase",
   [COST_ID]: "/cost",
   [KIOSK_ID]: "/kiosk",
+  [FACTORY_ID]: "/factory",
   [API_KEYS_ID]: "/api-keys",
   [TRAINING_ID]: "/training",
 };

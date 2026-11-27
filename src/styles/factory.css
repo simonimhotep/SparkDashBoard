@@ -1,0 +1,85 @@
+/* /factory — the Token Factory stage. Rendered outside the dashboard shell; every
+   element sizes from the stage's own design coordinates (1920 × 1080) and is
+   scaled to the viewport, so the layered art always lines up. */
+
+.factory {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-base);
+  color: var(--color-text);
+}
+
+.factory--empty {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.factory-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  text-align: center;
+}
+
+.factory-empty__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.factory-empty__head {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--color-text-strong);
+}
+
+.factory-empty__body {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.factory-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.factory-topbar__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  color: var(--color-text-strong);
+}
+
+.factory-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.factory-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 40px;
+  color: var(--color-muted);
+}

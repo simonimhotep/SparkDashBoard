@@ -22,6 +22,7 @@ import { OverviewPage } from "./components/OverviewPage/OverviewPage";
 import { ShowcasePage } from "./components/ShowcasePage/ShowcasePage";
 import { ShowcaseView } from "./components/ShowcasePage/ShowcaseView";
 import { KioskPage } from "./components/KioskPage/KioskPage";
+import { FactoryPage } from "./components/FactoryPage/FactoryPage";
 import { ThemeSwitch } from "./components/ThemeSwitch";
 import { SettingsDialog } from "./components/SettingsDialog";
 import { HarnessWizard } from "./components/HarnessWizard";
@@ -750,6 +751,8 @@ function App() {
     <>
       {route.mode === "showcase" && route.showcaseSparkId ? (
         <ShowcasePage sparkId={route.showcaseSparkId} />
+      ) : route.mode === "factory" ? (
+        <FactoryPage />
       ) : route.mode === "kiosk" ? (
         <KioskPage />
       ) : (
