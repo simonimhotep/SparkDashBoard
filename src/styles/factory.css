@@ -436,9 +436,11 @@
 
 .factory-unit__canopy {
   position: absolute;
-  right: -7%;
-  bottom: 26%;
-  width: 38%;
+  /* Seated over the operator, not on top of her head: the frame has to reach
+     the floor so the whale reads as sitting inside the cockpit. */
+  right: -10%;
+  bottom: 8%;
+  width: 50%;
   z-index: 3;
   opacity: 0.85;
   pointer-events: none;
