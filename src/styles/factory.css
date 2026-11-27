@@ -841,3 +841,70 @@
 @media (prefers-reduced-motion: reduce) {
   .factory-sheet__panel { animation: none; }
 }
+
+/* ─── 30-minute trend drawer ─────────────────────────────── */
+
+.factory-trend__empty {
+  margin: 8px 2px;
+  color: #8fa3b8;
+  font-size: 13px;
+}
+
+.factory-trend__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.factory-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.factory-trend__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.factory-trend__name {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.factory-trend__legend {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.factory-trend__key.is-gpu { color: #f6c04a; }
+.factory-trend__key.is-gen { color: #6fb3ff; }
+
+.factory-trend__chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.factory-trend__gpu,
+.factory-trend__gen {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.factory-trend__gpu { stroke: #e8a21c; }
+.factory-trend__gen { stroke: #6fb3ff; stroke-dasharray: 4 3; }

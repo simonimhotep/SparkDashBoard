@@ -9,6 +9,7 @@ import { Stage } from "./Stage";
 import { ThermalCard } from "./ThermalCard";
 import { ThermalSheet } from "./ThermalSheet";
 import { TopBar } from "./TopBar";
+import { TrendDrawer } from "./TrendDrawer";
 import "../../styles/factory.css";
 
 /**
@@ -22,9 +23,11 @@ export function FactoryPage() {
   const [paused, setPaused] = useState(false);
   const [preview, setPreview] = useState(false);
   const [thermalsOpen, setThermalsOpen] = useState(false);
+  const [trendIds, setTrendIds] = useState<string[] | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const fleet = useMemo(() => factoryFleet(sparks), [sparks]);
   const tempUnit = settings?.temperatureUnit === "fahrenheit" ? "fahrenheit" : "celsius";
+  const trendUnits = trendIds === null ? null : fleet.units.filter((u) => trendIds.includes(u.id));
 
   useEffect(() => {
     let cancelled = false;
@@ -81,14 +84,14 @@ export function FactoryPage() {
         onTogglePause={() => setPaused((v) => !v)}
         onTogglePreview={() => setPreview((v) => !v)}
         onOpenThermals={() => setThermalsOpen(true)}
-        onOpenTrend={() => {}}
+        onOpenTrend={() => setTrendIds(fleet.units.map((u) => u.id))}
         onToggleFullscreen={toggleFullscreen}
       />
       <div className="factory-body">
         <Stage
           fleet={fleet}
           tempUnit={tempUnit}
-          onSelectUnit={() => {}}
+          onSelectUnit={(id) => setTrendIds([id])}
           rootRef={stageRef}
           paused={paused}
           preview={preview}
@@ -100,6 +103,7 @@ export function FactoryPage() {
         tempUnit={tempUnit}
         onClose={() => setThermalsOpen(false)}
       />
+      <TrendDrawer units={trendUnits} onClose={() => setTrendIds(null)} />
     </div>
   );
 }
