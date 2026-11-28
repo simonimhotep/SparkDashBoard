@@ -411,29 +411,22 @@
 /* The cab is mirrored, not its badges: un-mirror the one glyph that lives inside it. */
 .factory-unit--right .factory-unit__heat { transform: scaleX(-1); }
 
-/* Cast-on stencil on the top plane, as in the approved art. */
+/* Cast-on stencil on the upper rail of the front-right face, clear of the cab and the arm base. */
 .factory-unit__number {
   position: absolute;
   z-index: 2;
-  left: calc(400px - 20px * var(--station-depth, 1));
-  top: calc(272px - 20px * var(--station-depth, 1));
+  left: calc(372px - 13px * var(--station-depth, 1));
+  top: calc(355px - 20px * var(--station-depth, 1));
   color: #5f4c38;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 30px;
+  font-size: 27px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: 0.02em;
   pointer-events: none;
-  /* Lies flat on the top plane: the same rake as the front-right edge it sits along. */
-  transform: rotate(-20deg);
+  /* Lies flat on that rail: the shallow rake the painted rim above the mesh has. */
+  transform: rotate(-5deg);
   transform-origin: left center;
-}
-
-/* The right-hand plane mirrors the rake: the stamp lies on the front-left edge. */
-.factory-unit--right .factory-unit__number {
-  left: calc(110px - 20px * var(--station-depth, 1));
-  top: calc(292px - 20px * var(--station-depth, 1));
-  transform: rotate(20deg);
 }
 
 /* Live hostname (or configured name) heads the instrument panel: the roof has no band wide

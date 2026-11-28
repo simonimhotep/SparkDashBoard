@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setLocale } from "../../i18n";
 import { makeSpark } from "../../testing/fixtures";
 import { cleanupRenders, render } from "../../testing/render";
@@ -31,6 +31,7 @@ describe("TopBar", () => {
         onOpenThermals={noop}
         onOpenTrend={noop}
         onToggleFullscreen={noop}
+        onBack={noop}
       />,
     );
     expect(container.textContent).toMatch(/Data from/);
@@ -54,10 +55,36 @@ describe("TopBar", () => {
         onOpenThermals={noop}
         onOpenTrend={noop}
         onToggleFullscreen={noop}
+        onBack={noop}
       />,
     );
     expect(container.textContent).not.toContain("0.0");
     expect(container.textContent).toContain("—");
+  });
+
+  it("offers a visible way back to the dashboard, not only the Esc key", () => {
+    const onBack = vi.fn();
+    const { container } = render(
+      <TopBar
+        fleet={fleet()}
+        connected
+        lastValidSnapshotAt={Date.now()}
+        refreshInterval={2_000}
+        tempUnit="celsius"
+        paused={false}
+        preview={false}
+        onTogglePause={noop}
+        onTogglePreview={noop}
+        onOpenThermals={noop}
+        onOpenTrend={noop}
+        onToggleFullscreen={noop}
+        onBack={onBack}
+      />,
+    );
+    const button = [...container.querySelectorAll("button")].find((b) => b.textContent?.includes("Overview"));
+    expect(button).toBeTruthy();
+    button?.click();
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 });
 

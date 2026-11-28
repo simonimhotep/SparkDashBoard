@@ -154,6 +154,7 @@ export function FactoryPage() {
           setTrendIds(fleet.units.map((u) => u.id));
         }}
         onToggleFullscreen={toggleFullscreen}
+        onBack={() => window.location.assign(idToPath(OVERVIEW_ID))}
       />
       <div className="factory-body">
         <Stage

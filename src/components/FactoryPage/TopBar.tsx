@@ -17,6 +17,7 @@ interface TopBarProps {
   onOpenThermals: () => void;
   onOpenTrend: () => void;
   onToggleFullscreen: () => void;
+  onBack: () => void;
 }
 
 function useClock(): number {
@@ -60,6 +61,7 @@ export function TopBar({
   onOpenThermals,
   onOpenTrend,
   onToggleFullscreen,
+  onBack,
 }: TopBarProps) {
   const { t } = useTranslation("factory");
   const now = useClock();
@@ -82,6 +84,9 @@ export function TopBar({
   return (
     <header className="factory-topbar">
       <div className="factory-topbar__brand">
+        <button type="button" className="factory-btn" onClick={onBack}>
+          <span aria-hidden="true">←</span> {t("backToDashboard")}
+        </button>
         <h1 className="factory-topbar__title">{t("title")}</h1>
         {preview ? <span className="factory-topbar__demo">{t("demoBadge")}</span> : null}
       </div>

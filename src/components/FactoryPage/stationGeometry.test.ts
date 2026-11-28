@@ -28,8 +28,19 @@ describe("approved factory ground geometry", () => {
     });
   });
 
-  it.each([1, 2, 4])("keeps %i units and their connected full-cycle arms on the common floor", (count) => {
-    const layout = stationLayout(count);
+  it("fills the back row before the front row, so a lone unit sits at the back left", () => {
+    expect(stationLayout(1).stations.map((s) => [s.side, s.depth])).toEqual([["left", 0]]);
+    expect(stationLayout(2).stations.map((s) => [s.side, s.depth])).toEqual([["left", 0], ["right", 0]]);
+    expect(stationLayout(3).stations.map((s) => [s.side, s.depth])).toEqual([["left", 0], ["right", 0], ["left", 1]]);
+    expect(stationLayout(4).stations.map((s) => [s.side, s.depth])).toEqual([["left", 0], ["right", 0], ["left", 1], ["right", 1]]);
+    // The back row is the far one: it sits higher and smaller than the front row.
+    const [back] = stationLayout(1).stations;
+    const [, , front] = stationLayout(4).stations;
+    expect(back.y).toBeLessThan(front.y);
+    expect(back.scale).toBeLessThan(front.scale);
+  });
+
+  it.each([1, 2, 4])("keeps %i units and their connected full-cycle arms on the common floor", (count) => {    const layout = stationLayout(count);
     expect(layout.stations).toHaveLength(count);
     for (const station of layout.stations) {
       const rest = armPose(station.side, 0, false, station.y, layout.height, station);

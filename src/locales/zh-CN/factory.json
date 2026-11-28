@@ -1,5 +1,6 @@
 {
   "title": "TOKEN 工厂",
+  "backToDashboard": "返回主界面",
   "collector": "Token 收集口",
   "online": "{{online}}/{{total}} 在线",
   "demoBadge": "演示",

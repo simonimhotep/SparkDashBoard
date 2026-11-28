@@ -8,11 +8,12 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 /** The approved two rows share stage coordinates with the belt and every moving joint. */
 export function stationLayout(count: number): { stations: StationPlacement[]; height: number } {
   const visible = Math.min(count, 4);
-  const rows = Math.max(1, Math.ceil(visible / 2));
   return {
     stations: Array.from({ length: visible }, (_, i) => {
+      // Slot order is the approved draft's: back-left, back-right, front-left, front-right.
+      // A short fleet keeps those slots and stays on the back row; it is never pulled forward.
       const side: StationSide = i % 2 ? "right" : "left";
-      const depth = rows === 1 ? 1 : Math.floor(i / 2);
+      const depth = Math.floor(i / 2);
       const scale = lerp(0.92, 1, depth);
       const footY = lerp(666, 993, depth);
       const footX = side === "left" ? lerp(535, 485, depth) : lerp(1385, 1461, depth);

@@ -1,5 +1,6 @@
 {
   "title": "TOKEN FACTORY",
+  "backToDashboard": "Overview",
   "collector": "Token Collector",
   "online": "{{online}}/{{total}} online",
   "demoBadge": "DEMO",
