@@ -14,11 +14,13 @@ interface StorageDialogProps {
   icon: ReactNode;
   tone?: "danger" | "neutral";
   children: ReactNode;
+  /** A control the action depends on, kept above the footer and outside the scrolling body so it stays in reach. */
+  pinned?: ReactNode;
   footer: ReactNode;
 }
 
 /** The modal shell the Storage Manager's confirmations share: header, scrolling body, footer. */
-export function StorageDialog({ open, busy, onClose, title, icon, tone = "danger", children, footer }: StorageDialogProps) {
+export function StorageDialog({ open, busy, onClose, title, icon, tone = "danger", children, pinned, footer }: StorageDialogProps) {
   const titleId = useId();
   const { mounted, visible } = useModalPresence(open);
   const trapRef = useFocusTrap(mounted);
@@ -54,6 +56,7 @@ export function StorageDialog({ open, busy, onClose, title, icon, tone = "danger
         </div>
         <div className="modal-sheet__body modal-sheet__stack">{children}</div>
         <div className="modal-sheet__footer">
+          {pinned ? <div className="modal-sheet__pinned">{pinned}</div> : null}
           <div className="modal-sheet__footer-actions">{footer}</div>
         </div>
       </div>

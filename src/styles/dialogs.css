@@ -301,6 +301,11 @@
   gap: 0.5rem;
   margin-left: auto;
 }
+/* A control the action needs, laid out as a full row above the buttons: it stays put while the body scrolls. */
+.modal-sheet__pinned {
+  flex: 1 0 100%;
+  min-width: 0;
+}
 
 /* ─── Form fields (scoped to dialogs) ────────────────────── */
 .field {

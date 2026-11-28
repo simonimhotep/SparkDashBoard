@@ -374,4 +374,16 @@ describe("delete check in the bulk delete dialog", () => {
     setInput(document.getElementById("st-bulk-confirm") as HTMLInputElement, "delete 4 items");
     expect(button(/Delete 4 permanently/).disabled).toBe(false);
   });
+
+  it("keeps the typed confirmation pinned above the footer, out of the body that scrolls", async () => {
+    const d = deferred();
+    render(<Bulk onStart={vi.fn(async () => ({ id: "j1" }) as StorageBulkDeleteJob)} />);
+    await flush();
+    await d.resolve(lowAdvice(["/data/a", "/data/b", "/data/c.bin", "/data/d.bin"]));
+    // A long item list and a long check make the body scroll; the field that enables the button must not go with it.
+    const field = document.getElementById("st-bulk-confirm")!;
+    expect(field.closest(".modal-sheet__body")).toBeNull();
+    expect(field.closest(".modal-sheet__pinned")).not.toBeNull();
+    expect(field.closest(".modal-sheet__footer")).not.toBeNull();
+  });
 });

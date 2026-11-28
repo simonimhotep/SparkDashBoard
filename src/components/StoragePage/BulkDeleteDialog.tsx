@@ -270,6 +270,48 @@ export function BulkDeleteDialog({ sparkId, sparkName, selection, access, prefer
       onClose={onClose}
       title={t("deletion.deleteItemsTitle", { count })}
       icon={<TrashIcon className="h-4 w-4 shrink-0" />}
+      pinned={
+        // The typed phrase, and the progress once the Spark works through the items: above the footer and outside
+        // the scrolling body, so the field that enables the delete is never below the fold.
+        <div className="st-swap">
+          <div className={`field st-bulk__confirm${running ? " is-off" : ""}`} inert={running} aria-hidden={running}>
+            {/* Not a <label for>: clicking or dragging across a label's text moves focus to its input, which
+                cancels the selection, and the phrase here is meant to be selected and copied. */}
+            <div id="st-bulk-confirm-label" className="st-field-label">
+              Type <b className="mono st-selectable">{phrase}</b> to confirm
+            </div>
+            <input
+              id="st-bulk-confirm"
+              aria-labelledby="st-bulk-confirm-label"
+              type="text"
+              className="field-input--mono"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              value={typed}
+              disabled={busy}
+              placeholder={phrase}
+              onChange={(e) => setTyped(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void run();
+                }
+              }}
+            />
+          </div>
+          <div className={`st-bulk-progress${running ? "" : " is-off"}`} role="status" aria-live="polite" aria-hidden={!running}>
+            <div className="st-bulk-progress__line">
+              <b>{running ? t("deletion.progress", { current: step, total: mine!.total }) : ""}</b>
+              <span className="st-bulk-progress__name mono">{mine?.current ? baseName(mine.current) : ""}</span>
+            </div>
+            <span className="st-bulk-progress__bar" aria-hidden>
+              <i style={{ ["--w" as string]: `${pct}%` }} />
+            </span>
+            <span className="st-bulk-progress__note">{t("deletion.continues")}</span>
+          </div>
+        </div>
+      }
       footer={
         <>
           <button type="button" className="btn btn--ghost" onClick={onClose} disabled={busy}>
@@ -348,46 +390,6 @@ export function BulkDeleteDialog({ sparkId, sparkName, selection, access, prefer
           {anyFolder ? "The items, and everything in the folders, are" : count === 1 ? "The file is" : "The files are"} deleted from the Spark&rsquo;s disk right away, one after
           another. There is no trash to restore from.
         </span>
-      </div>
-
-      {/* The typed phrase and, once the Spark works through the items, the progress: one place, one size. */}
-      <div className="st-swap">
-        <div className={`field st-bulk__confirm${running ? " is-off" : ""}`} inert={running} aria-hidden={running}>
-          {/* Not a <label for>: clicking or dragging across a label's text moves focus to its input, which
-              cancels the selection, and the phrase here is meant to be selected and copied. */}
-          <div id="st-bulk-confirm-label" className="st-field-label">
-            Type <b className="mono st-selectable">{phrase}</b> to confirm
-          </div>
-          <input
-            id="st-bulk-confirm"
-            aria-labelledby="st-bulk-confirm-label"
-            type="text"
-            className="field-input--mono"
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            value={typed}
-            disabled={busy}
-            placeholder={phrase}
-            onChange={(e) => setTyped(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                void run();
-              }
-            }}
-          />
-        </div>
-        <div className={`st-bulk-progress${running ? "" : " is-off"}`} role="status" aria-live="polite" aria-hidden={!running}>
-          <div className="st-bulk-progress__line">
-            <b>{running ? t("deletion.progress", { current: step, total: mine!.total }) : ""}</b>
-            <span className="st-bulk-progress__name mono">{mine?.current ? baseName(mine.current) : ""}</span>
-          </div>
-          <span className="st-bulk-progress__bar" aria-hidden>
-            <i style={{ ["--w" as string]: `${pct}%` }} />
-          </span>
-          <span className="st-bulk-progress__note">{t("deletion.continues")}</span>
-        </div>
       </div>
 
       <label className="check-row">
