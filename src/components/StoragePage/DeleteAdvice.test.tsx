@@ -236,6 +236,18 @@ describe("delete check in the single delete dialog", () => {
     expect(deleteStoragePath).toHaveBeenCalledWith("s1", { path: FOLDER.path });
   });
 
+  it("keeps the folder's name field pinned above the footer, out of the body that scrolls", async () => {
+    const d = deferred();
+    render(<Single target={FOLDER} />);
+    await flush();
+    await d.resolve(lowAdvice([FOLDER.path]));
+    // A long check makes the body scroll; the field that enables the button must not go with it.
+    const field = document.getElementById("st-confirm-name")!;
+    expect(field.closest(".modal-sheet__body")).toBeNull();
+    expect(field.closest(".modal-sheet__pinned")).not.toBeNull();
+    expect(field.closest(".modal-sheet__footer")).not.toBeNull();
+  });
+
   it("a failed check says nothing was checked and asks for a tick; it never blocks the delete", async () => {
     const d = deferred();
     render(<Single target={FILE} />);

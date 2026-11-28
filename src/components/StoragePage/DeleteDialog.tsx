@@ -178,6 +178,38 @@ export function DeleteDialog({ sparkId, sparkName, target, access, preferAdmin, 
       onClose={onClose}
       title={isFolder ? t("deletion.deleteFolderTitle") : t("deletion.deleteFileTitle")}
       icon={<TrashIcon className="h-4 w-4 shrink-0" />}
+      pinned={
+        // The folder name to type: above the footer and outside the scrolling body, so the field that
+        // enables the delete is never below the fold.
+        isFolder ? (
+          <div className="field">
+            {/* Not a <label for>: clicking or dragging across a label's text moves focus to its input, which
+                cancels the selection, and the name here is meant to be selected and copied. */}
+            <div id="st-confirm-label" className="st-field-label">
+              Type <b className="mono st-selectable">{name}</b> to confirm
+            </div>
+            <input
+              id="st-confirm-name"
+              aria-labelledby="st-confirm-label"
+              type="text"
+              className="field-input--mono"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              value={typed}
+              disabled={busy}
+              placeholder={name}
+              onChange={(e) => setTyped(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void run();
+                }
+              }}
+            />
+          </div>
+        ) : null
+      }
       footer={
         <>
           <button type="button" className="btn btn--ghost" onClick={onClose} disabled={busy}>
@@ -231,35 +263,6 @@ export function DeleteDialog({ sparkId, sparkName, target, access, preferAdmin, 
           {isFolder ? "The folder and everything in it are" : "The file is"} deleted from the Spark&rsquo;s disk right away. There is no trash to restore from.
         </span>
       </div>
-
-      {isFolder ? (
-        <div className="field">
-          {/* Not a <label for>: clicking or dragging across a label's text moves focus to its input, which
-              cancels the selection, and the name here is meant to be selected and copied. */}
-          <div id="st-confirm-label" className="st-field-label">
-            Type <b className="mono st-selectable">{name}</b> to confirm
-          </div>
-          <input
-            id="st-confirm-name"
-            aria-labelledby="st-confirm-label"
-            type="text"
-            className="field-input--mono"
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            value={typed}
-            disabled={busy}
-            placeholder={name}
-            onChange={(e) => setTyped(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                void run();
-              }
-            }}
-          />
-        </div>
-      ) : null}
 
       <label className="check-row">
         <input type="checkbox" checked={asAdmin} disabled={busy} onChange={(e) => setAsAdmin(e.target.checked)} />
