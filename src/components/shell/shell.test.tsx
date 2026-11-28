@@ -305,6 +305,17 @@ describe("MobileTabBar sheet", () => {
     expect(props.onSelect).toHaveBeenCalledWith(TRAINING_ID);
   });
 
+  it("links to the Factory page from the mobile Sparks sheet, since the rail that holds it is hidden there", () => {
+    const { container } = render(
+      <MobileTabBar sparks={[makeSpark("a")]} activeId={null} onSelect={() => {}} onAdd={() => {}} onOpenSettings={() => {}} />
+    );
+    act(() => [...container.querySelectorAll("button")].find((b) => b.textContent === "Sparks")!.click());
+    // A link, like the sidebar's: the page renders outside the dashboard shell, so it needs its own route load.
+    const factory = document.querySelector<HTMLAnchorElement>('.sheet a[href="/factory"]');
+    expect(factory).not.toBeNull();
+    expect(factory!.textContent).toContain("Factory");
+  });
+
   it("Stats opens Token totals, Fleet energy, Temps, Activity and Storage; Sparks lists Storage under Benchs & Tools; Showcase follows Prefill", () => {
     const onSelect = vi.fn();
     const { container } = render(

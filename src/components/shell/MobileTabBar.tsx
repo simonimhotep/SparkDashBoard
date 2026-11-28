@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useInertBackground } from "../../hooks/useInertBackground";
 import type { SparkSnapshot } from "../../api/types";
-import { ACTIVITY_ID, API_KEYS_ID, TRAINING_ID, benchId, benchTypeOf, COST_ID, ENERGY_ID, isPageId, OVERVIEW_ID, SHOWCASE_ID, STORAGE_ID, TEMPS_ID, TOKENS_ID } from "../../constants";
+import { ACTIVITY_ID, API_KEYS_ID, TRAINING_ID, benchId, benchTypeOf, COST_ID, ENERGY_ID, FACTORY_ID, idToPath, isPageId, OVERVIEW_ID, SHOWCASE_ID, STORAGE_ID, TEMPS_ID, TOKENS_ID } from "../../constants";
 import { NAV_BENCH_TYPES, benchNavActive } from "../bench/benchCatalog";
-import { BoltIcon, ChartIcon, CoinsIcon, DiskIcon, GearIcon, GridIcon, KeyIcon, ListIcon, PlusIcon, ServerIcon, TerminalIcon, ThermometerIcon, TokensIcon } from "../ui/icons";
+import { BoltIcon, ChartIcon, CoinsIcon, DiskIcon, FactoryIcon, GearIcon, GridIcon, KeyIcon, ListIcon, PlusIcon, ServerIcon, TerminalIcon, ThermometerIcon, TokensIcon } from "../ui/icons";
 import { isThrottling, railSubLabel } from "./sparkSummary";
 import { useBenchLabels } from "./useBenchLabels";
 import { ShutdownAll } from "../ShutdownAll";
@@ -157,6 +157,11 @@ export function MobileTabBar({ sparks, activeId, onSelect, onAdd, onOpenSettings
                     </Fragment>
                   ))}
                   {pageButton(STORAGE_ID, t("nav.storage"), <DiskIcon className="h-3.5 w-3.5" />, true)}
+                  {/* The factory renders outside the dashboard shell (useAppRoute), so it needs a real link like the sidebar's. */}
+                  <a href={idToPath(FACTORY_ID)} className="rail-item rail-item--compact" onClick={() => setSheet(false)}>
+                    <FactoryIcon className="h-3.5 w-3.5" />
+                    <span className="rail-item__name">{t("nav.factory")}</span>
+                  </a>
                   <div className="rail-label rail-label--spaced">
                     <span>{t("nav.sparks")}</span>
                   </div>
