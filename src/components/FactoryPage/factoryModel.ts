@@ -14,6 +14,8 @@ export type FactoryUnitNote =
 export interface FactoryUnit {
   id: string;
   name: string;
+  /** Reported by the device's Tailscale probe; never inferred from its arbitrary id. */
+  hostname?: string | null;
   online: boolean;
   offlineReason: string | null;
   station: FactoryStation;
@@ -70,7 +72,20 @@ export function smoothIntensity(prev: number, target: number, dtMs: number, tauM
 }
 
 export function factoryColumns(count: number): number {
-  return count <= 1 ? 1 : Math.min(3, Math.ceil(Math.sqrt(count)));
+  return count <= 1 ? 1 : 2;
+}
+
+/** Only this station's observations may drive its arm or Token output. */
+export function unitActivity(unit: FactoryUnit): { working: boolean; intensity: number; tokenRate: number } {
+  if (!unit.online) return { working: false, intensity: 0, tokenRate: 0 };
+  const tps = unit.decodeTps ?? 0;
+  const working = tps > 0 || (unit.activeStreams ?? 0) > 0 ||
+    (unit.station === "worker" && (unit.gpuPct ?? 0) > 5);
+  return {
+    working,
+    intensity: working ? Math.max(0.12, intensityFor(tps), unit.station === "worker" ? (unit.gpuPct ?? 0) / 100 : 0) : 0,
+    tokenRate: tokenRatePerSecond(tps),
+  };
 }
 
 /**
@@ -91,7 +106,7 @@ export function isSnapshotStale(
 
 /** Endpoints whose rates were actually measured this poll. */
 function measuredEndpoints(spark: SparkSnapshot): LlmMetrics[] {
-  return (spark.metrics.llm ?? []).filter((e) => e.available && e.measurementValid !== false);
+  return spark.online ? (spark.metrics.llm ?? []).filter((e) => e.available && e.measurementValid !== false) : [];
 }
 
 /** The served model of an endpoint that answers, whether or not its rates were readable. */
@@ -145,6 +160,7 @@ function unitOf(spark: SparkSnapshot, headOf: HeadResolver<SparkSnapshot>): Fact
   return {
     id: spark.id,
     name: spark.name,
+    hostname: spark.metrics.tailscale?.available ? spark.metrics.tailscale.hostName : null,
     online: spark.online,
     offlineReason: spark.offlineReason ?? null,
     station,
@@ -157,9 +173,9 @@ function unitOf(spark: SparkSnapshot, headOf: HeadResolver<SparkSnapshot>): Fact
     activeStreams: isWorker || endpoints.length === 0
       ? null
       : sumOf(endpoints.map((e) => e.requestsRunning ?? e.slotsActive)),
-    gpuPct: measured(gpu?.usage, availability?.usage !== false),
-    gpuTempC: measured(gpu?.temperature, availability?.temperature !== false),
-    gpuW: measured(gpu?.power?.draw, availability?.powerDraw !== false),
+    gpuPct: measured(gpu?.usage, spark.online && availability?.usage !== false),
+    gpuTempC: measured(gpu?.temperature, spark.online && availability?.temperature !== false),
+    gpuW: measured(gpu?.power?.draw, spark.online && availability?.powerDraw !== false),
     hotspot: spark.online && gpu?.throttle?.thermal === true,
   };
 }
@@ -174,6 +190,7 @@ function queuedOf(spark: SparkSnapshot): number | null {
 function fanAverage(list: readonly SparkSnapshot[]): number | null {
   const values: number[] = [];
   for (const spark of list) {
+    if (!spark.online) continue;
     for (const card of spark.metrics.gpu?.gpus ?? []) {
       const pct = card.fanPct;
       if (typeof pct === "number" && Number.isFinite(pct)) values.push(pct);

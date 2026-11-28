@@ -8,6 +8,7 @@ import {
   isSnapshotStale,
   smoothIntensity,
   tokenRatePerSecond,
+  unitActivity,
 } from "./factoryModel";
 
 describe("factoryFleet", () => {
@@ -128,6 +129,50 @@ describe("factoryFleet", () => {
     expect(factoryFleet([b]).fanPctAvg).toBe(40);
   });
 
+  it("discards cached measurements when a device is offline", () => {
+    const spark = makeSpark("cached");
+    spark.online = false;
+    const unit = factoryFleet([spark]).units[0];
+    expect([unit.decodeTps, unit.activeStreams, unit.gpuPct, unit.gpuTempC, unit.gpuW]).toEqual([
+      null, null, null, null, null,
+    ]);
+    expect(factoryFleet([spark]).decodeTps).toBe(0);
+  });
+
+  it("excludes cached offline fan speeds from the live average", () => {
+    const off = makeSpark("off");
+    off.online = false;
+    (off.metrics.gpu as unknown as Record<string, unknown>).gpus = [{ fanPct: 77 }];
+    expect(factoryFleet([off]).fanPctAvg).toBeNull();
+    const on = makeSpark("on");
+    (on.metrics.gpu as unknown as Record<string, unknown>).gpus = [{ fanPct: 35 }];
+    expect(factoryFleet([off, on]).fanPctAvg).toBe(35);
+  });
+
+  it("uses a measured hostname rather than guessing it from a device id", () => {
+    const spark = makeSpark("opaque-id");
+    spark.metrics.tailscale = { available: true, hostName: "spark-e4ee" } as NonNullable<typeof spark.metrics.tailscale>;
+    expect(factoryFleet([spark]).units[0].hostname).toBe("spark-e4ee");
+    spark.metrics.tailscale.available = false;
+    expect(factoryFleet([spark]).units[0].hostname).toBeNull();
+  });
+
+  it("keeps each arm's work and output independent from the fleet", () => {
+    const busy = makeSpark("busy");
+    const idle = makeSpark("idle");
+    idle.metrics.llm[0].generationTps = 0;
+    const worker = makeSpark("worker");
+    worker.role = "worker";
+    const [a, b, c] = factoryFleet([busy, idle, worker]).units;
+    expect(unitActivity(a).working).toBe(true);
+    expect(unitActivity(a).tokenRate).toBeGreaterThan(0);
+    expect(unitActivity(b)).toEqual({ working: false, intensity: 0, tokenRate: 0 });
+    expect(unitActivity(c).working).toBe(true);
+    expect(unitActivity(c).tokenRate).toBe(0);
+    expect(c.decodeTps).toBeNull();
+    expect(unitActivity({ ...a, online: false }).working).toBe(false);
+  });
+
   it("maps throughput to an intensity between 0 and 1", () => {
     expect(intensityFor(0)).toBe(0);
     expect(intensityFor(20)).toBeCloseTo(0.5);
@@ -142,7 +187,7 @@ describe("factoryFleet", () => {
     expect(smoothIntensity(0, 1, 1200)).toBeCloseTo(1 - Math.exp(-1), 3);
     expect(factoryColumns(1)).toBe(1);
     expect(factoryColumns(3)).toBe(2);
-    expect(factoryColumns(6)).toBe(3);
+    expect(factoryColumns(6)).toBe(2);
   });
 
   it("calls a snapshot stale when the socket is down or it is older than three polls", () => {

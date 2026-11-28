@@ -1,5 +1,6 @@
 {
   "title": "TOKEN FACTORY",
+  "collector": "Token Collector",
   "online": "{{online}}/{{total}} online",
   "demoBadge": "DEMO",
   "preview": "Preview",
